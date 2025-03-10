@@ -13,7 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_room'])) {
     $room_id = $_POST['room_id'];
     $room_type = $_POST['room_type'];
     $total_rooms = $_POST['total_rooms'];
-    $price = $_POST['price']; // New price field
+    $price_per_night = $_POST['price_per_night']; // Use price_per_night for rooms
 
     // Handle image upload
     $image_path = null;
@@ -25,21 +25,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_room'])) {
         $image_name = uniqid('room_', true) . '.' . pathinfo($_FILES['room_image']['name'], PATHINFO_EXTENSION);
         $image_path = $upload_dir . $image_name;
 
-        // Move the uploaded file to the target directory
         move_uploaded_file($_FILES['room_image']['tmp_name'], $image_path);
     }
 
     // Update the room details in the database
     $stmt = $pdo->prepare("
         UPDATE rooms 
-        SET room_type = ?, total_rooms = ?, price = ?" . ($image_path ? ", image = ?" : "") . "
+        SET room_type = ?, total_rooms = ?, price_per_night = ?" . ($image_path ? ", image = ?" : "") . "
         WHERE id = ?
     ");
 
     if ($image_path) {
-        $stmt->execute([$room_type, $total_rooms, $price, $image_path, $room_id]);
+        $stmt->execute([$room_type, $total_rooms, $price_per_night, $image_path, $room_id]);
     } else {
-        $stmt->execute([$room_type, $total_rooms, $price, $room_id]);
+        $stmt->execute([$room_type, $total_rooms, $price_per_night, $room_id]);
     }
 
     echo "<script>alert('Room details updated successfully!');</script>";
@@ -50,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_hall'])) {
     $hall_id = $_POST['hall_id'];
     $hall_name = $_POST['hall_name'];
     $total_halls = $_POST['total_halls'];
-    $price = $_POST['price']; // New price field
+    $price_per_day = $_POST['price_per_day']; // Use price_per_day for halls
 
     // Handle image upload
     $image_path = null;
@@ -62,21 +61,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_hall'])) {
         $image_name = uniqid('hall_', true) . '.' . pathinfo($_FILES['hall_image']['name'], PATHINFO_EXTENSION);
         $image_path = $upload_dir . $image_name;
 
-        // Move the uploaded file to the target directory
         move_uploaded_file($_FILES['hall_image']['tmp_name'], $image_path);
     }
 
     // Update the hall details in the database
     $stmt = $pdo->prepare("
         UPDATE halls 
-        SET hall_name = ?, total_halls = ?, price = ?" . ($image_path ? ", image = ?" : "") . "
+        SET hall_name = ?, total_halls = ?, price_per_day = ?" . ($image_path ? ", image = ?" : "") . "
         WHERE id = ?
     ");
 
     if ($image_path) {
-        $stmt->execute([$hall_name, $total_halls, $price, $image_path, $hall_id]);
+        $stmt->execute([$hall_name, $total_halls, $price_per_day, $image_path, $hall_id]);
     } else {
-        $stmt->execute([$hall_name, $total_halls, $price, $hall_id]);
+        $stmt->execute([$hall_name, $total_halls, $price_per_day, $hall_id]);
     }
 
     echo "<script>alert('Hall details updated successfully!');</script>";
@@ -209,8 +207,8 @@ $halls = $stmt->fetchAll();
                 <input type="number" class="form-control" id="total_rooms" name="total_rooms" min="1" required>
             </div>
             <div class="mb-3">
-                <label for="price" class="form-label">Price per Night</label>
-                <input type="number" class="form-control" id="price" name="price" step="0.01" min="0" required>
+                <label for="price_per_night" class="form-label">Price per Night</label>
+                <input type="number" class="form-control" id="price_per_night" name="price_per_night" step="0.01" min="0" required>
             </div>
             <div class="mb-3">
                 <label for="room_image" class="form-label">Upload New Image</label>
@@ -241,8 +239,8 @@ $halls = $stmt->fetchAll();
                 <input type="number" class="form-control" id="total_halls" name="total_halls" min="1" required>
             </div>
             <div class="mb-3">
-                <label for="price" class="form-label">Price per Day</label>
-                <input type="number" class="form-control" id="price" name="price" step="0.01" min="0" required>
+                <label for="price_per_day" class="form-label">Price per Day</label>
+                <input type="number" class="form-control" id="price_per_day" name="price_per_day" step="0.01" min="0" required>
             </div>
             <div class="mb-3">
                 <label for="hall_image" class="form-label">Upload New Image</label>
